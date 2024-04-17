@@ -1,10 +1,20 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { useTodoStore } from '../stores/todo'
-const { addTodo, removeTodo, todoState, fetchTodos } = useTodoStore()
+
+const todoStore = useTodoStore()
+
 onMounted(() => {
-  fetchTodos()
+  todoStore.fetchTodos()
 })
+
+const addTodo = () => {
+  todoStore.addTodo()
+}
+
+const removeTodo = (index: number, id: string) => {
+  todoStore.removeTodo(index, id)
+}
 </script>
 
 <template>
@@ -21,20 +31,20 @@ onMounted(() => {
       </div>
     </div> -->
     <div class="container mx-auto my-10 w-ful">
-      <!-- <h1 class="text-center text-3xl font-semibold mb-4">To Do List</h1> -->
+      <h1 v-show="todoStore.allTodos.length" class="text-xl mb-4"> {{
+        todoStore.completedTodos }} out of {{ todoStore.allTodos.length }} are completed</h1>
       <div class="md:w-full mx-auto">
         <div class="bg-white shadow-md border border-gray-200 rounded-lg p-6">
           <form @submit.prevent="addTodo" id="todo-form">
             <div class="flex mb-4">
               <input type="text"
                 class="w-full px-4 py-2 mr-2 rounded-lg border-gray-300 focus:outline-none focus:border-blue-500"
-                id="todo-input" placeholder="Add new task" required v-model="todoState.volatile" />
-              <button v-text="todoState.loading ? 'Loading...' : 'Add'" :disabled="todoState.loading"
+                id="todo-input" placeholder="Add new task" required v-model="todoStore.volatile" />
+              <button v-text="todoStore.loading ? 'Loading...' : 'Add'" :disabled="todoStore.loading"
                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" />
-
             </div>
           </form>
-          <ul v-for="(todo, index) of todoState.todos" :key="index">
+          <ul v-for="(todo, index) of todoStore.allTodos" :key="index">
             <div class="flex items-center justify-between">
               <label class="flex items-center flex-grow">
                 <input type="checkbox" v-model="todo.completed" class="mr-5" />
